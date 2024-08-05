@@ -47,13 +47,70 @@ function sessiontimeincreament(){
         sessioninc++;
         sessionTimer.innerText = sessioninc;
 }
-function resettime(){
-    showTimer.innerText="05:00";
-    breakTimer.innerText = "1";
-    sessionTimer.innerText = "5";
+
+let interval;
+let isSession = true;
+
+function startTimer() {
+    let timerValue = parseTime(showTimer.innerText);
+
+    interval = setInterval(() => {
+        if (timerValue.minutes === 0 && timerValue.seconds === 0) {
+            if (isSession) {
+                timerValue = parseTime(breakTimer.innerText);
+                isSession = false;
+            } else {
+                timerValue = parseTime(sessionTimer.innerText);
+                isSession = true;
+            }
+        } else {
+            timerValue = decrementTime(timerValue);
+        }
+        showTimer.innerText = formatTime(timerValue);
+    }, 1000);
 }
+
+function parseTime(timeString) {
+    let [minutes, seconds] = timeString.split(":").map(Number);
+    return { minutes, seconds };
+}
+
+function decrementTime({ minutes, seconds }) {
+    if (seconds === 0) {
+        minutes--;
+        seconds = 59;
+    } else {
+        seconds--;
+    }
+    return { minutes, seconds };
+}
+
+function formatTime({ minutes, seconds }) {
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+
+function resettime(){
+    // showTimer.innerText="05:00";
+    // breakTimer.innerText = "1";
+    // sessionTimer.innerText = "5";
+    // start.disabled = false;
+    // reset.disabled = true;
+    clearInterval(interval);
+    showTimer.innerText = sessionTimer.innerText
+    isSession = true;
+}
+
 function starttime(){
-    
+    let sessionval = sessionTimer.innerText;
+    let breakval = breakTimer.innerText
+    console.log(sessionval);
+    console.log(breakval);
+    // start.disabled = true;
+    // reset.disabled = false;
+
+    clearInterval(interval);
+    startTimer();
 }
 
 
